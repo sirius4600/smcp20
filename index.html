@@ -20,9 +20,6 @@
     <!-- Babel Standalone for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Lucide React Icons -->
-    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
-    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -98,7 +95,75 @@
     
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-        const { ChevronRight, RefreshCw, CheckCircle2, BookOpen, Moon, Sun, Clock, Send, RotateCcw, ChevronDown, ChevronUp, Map, Star } = lucideReact;
+        
+        // 내장 SVG 아이콘 컴포넌트들
+        const Icons = {
+            ChevronRight: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m9 18 6-6-6-6" />
+                </svg>
+            ),
+            RefreshCw: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+            ),
+            CheckCircle: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            ),
+            BookOpen: ({ className = "w-8 h-8" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            ),
+            Moon: ({ className = "w-6 h-6" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            ),
+            Sun: ({ className = "w-6 h-6" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            ),
+            Clock: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            ),
+            Send: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            ),
+            RotateCcw: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                </svg>
+            ),
+            ChevronDown: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m6 9 6 6 6-6" />
+                </svg>
+            ),
+            ChevronUp: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m18 15-6-6-6 6" />
+                </svg>
+            ),
+            Map: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+            ),
+            Star: ({ className = "w-8 h-8" }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+            )
+        };
 
         const TranslationApp = () => {
           const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -748,7 +813,7 @@
                       <div className={`${isMobile ? 'p-1.5' : 'p-2'} rounded-full ${
                         isDarkMode ? 'bg-white/20' : 'bg-white/20'
                       }`}>
-                        <Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ${
+                        <Icons.Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ${
                           isDarkMode ? 'text-white' : 'text-white'
                         }`} />
                       </div>
@@ -775,18 +840,18 @@
                           : 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-600 border border-gray-300'
                       }`}
                     >
-                      {isDarkMode ? <Sun className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} /> : <Moon className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />}
+                      {isDarkMode ? <Icons.Sun className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} /> : <Icons.Moon className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />}
                     </button>
                   </div>
                   
                   {/* 제목 영역 */}
                   <div className="text-center">
                     <div className={`flex items-center justify-center ${isMobile ? 'gap-2 mb-3' : 'gap-3 mb-4'}`}>
-                      <BookOpen className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                      <Icons.BookOpen className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                       <h1 className={`${isMobile ? 'text-2xl mobile-text-2xl' : 'text-3xl'} font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                         해사영어 영작 문제
                       </h1>
-                      <Star className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+                      <Icons.Star className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
                     </div>
                     <p className={`${isMobile ? 'text-sm mobile-text-sm' : ''} ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                       초급부터 고급까지 엄선된 20문제로 해사영어 실력을 향상시켜보세요
@@ -883,7 +948,7 @@
                               : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
                           }`}
                         >
-                          <Send className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          <Icons.Send className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                           답안 제출
                         </button>
                       </div>
@@ -912,7 +977,7 @@
                               return isDarkMode ? 'bg-red-800' : 'bg-red-500';
                             })()
                           }`}>
-                            <CheckCircle2 className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} ${
+                            <Icons.CheckCircle className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} ${
                               isDarkMode ? 'text-white' : 'text-white'
                             }`} />
                           </div>
@@ -959,7 +1024,7 @@
                             <div className={`${isMobile ? 'p-1.5' : 'p-2'} rounded-full ${
                               isDarkMode ? 'bg-green-800' : 'bg-green-500'
                             }`}>
-                              <Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ${
+                              <Icons.Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ${
                                 isDarkMode ? 'text-green-300' : 'text-white'
                               }`} />
                             </div>
@@ -1005,7 +1070,7 @@
                           <h3 className={`flex items-center gap-2 ${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold mb-3 ${
                             isDarkMode ? 'text-green-400' : 'text-green-700'
                           }`}>
-                            <CheckCircle2 className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                            <Icons.CheckCircle className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                             모범 답안
                           </h3>
                           <div className={`border-l-4 border-green-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
@@ -1062,11 +1127,11 @@
                               : 'text-cyan-700 hover:bg-cyan-50'
                           }`}
                         >
-                          <Map className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          <Icons.Map className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                           영작지도 (작문 순서)
                           {showWritingGuide ? 
-                            <ChevronUp className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-auto`} /> : 
-                            <ChevronDown className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-auto`} />
+                            <Icons.ChevronUp className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-auto`} /> : 
+                            <Icons.ChevronDown className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-auto`} />
                           }
                         </button>
                         
@@ -1136,7 +1201,7 @@
                             : 'bg-orange-500 hover:bg-orange-600 text-white'
                         }`}
                       >
-                        <RotateCcw className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                        <Icons.RotateCcw className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                         <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>다시풀기</span>
                       </button>
 
@@ -1159,14 +1224,14 @@
                           className={`bg-green-600 hover:bg-green-700 text-white ${isMobile ? 'px-6 py-2.5' : 'px-8 py-3'} rounded-lg font-semibold transition-colors duration-200 flex items-center gap-2 touch-button`}
                         >
                           <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>다음 문제</span>
-                          <ChevronRight className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          <Icons.ChevronRight className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                         </button>
                       ) : (
                         <button
                           onClick={handleReset}
                           className={`bg-blue-600 hover:bg-blue-700 text-white ${isMobile ? 'px-6 py-2.5' : 'px-8 py-3'} rounded-lg font-semibold transition-colors duration-200 flex items-center gap-2 touch-button`}
                         >
-                          <RefreshCw className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          <Icons.RefreshCw className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                           <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>처음부터 다시</span>
                         </button>
                       )}
