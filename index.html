@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>해사영어 영작 문제 - SMCP 20</title>
+    <meta name="description" content="해사영어 영작 문제 20선 - 초급부터 고급까지 엄선된 문제로 해사영어 실력 향상">
+    <meta name="keywords" content="해사영어, 영작, SMCP, Maritime English, 선박, 항해">
+    
+    <!-- iOS Safari 최적화 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="해사영어 영작">
+    <meta name="theme-color" content="#1e40af">
+    
+    <!-- React 18 CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide React Icons -->
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 모바일 최적화 CSS -->
+    <style>
+        /* iOS Safari 안전 영역 대응 */
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        /* 터치 영역 최적화 */
+        button, textarea, input {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        /* iOS 줌 방지 */
+        input, textarea, select {
+            font-size: 16px !important;
+            transform: translateZ(0);
+        }
+        
+        /* 스크롤 최적화 */
+        .scroll-container {
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+        }
+        
+        /* 버튼 터치 피드백 */
+        .touch-button {
+            transition: all 0.2s ease;
+            transform: translateZ(0);
+        }
+        
+        .touch-button:active {
+            transform: scale(0.95) translateZ(0);
+        }
+        
+        /* 모바일 텍스트 최적화 */
+        @media (max-width: 640px) {
+            .mobile-text-sm { font-size: 0.875rem; }
+            .mobile-text-base { font-size: 1rem; }
+            .mobile-text-lg { font-size: 1.125rem; }
+            .mobile-text-xl { font-size: 1.25rem; }
+            .mobile-text-2xl { font-size: 1.5rem; }
+            .mobile-text-3xl { font-size: 1.875rem; }
+        }
+        
+        /* 키보드가 올라올 때 레이아웃 조정 */
+        @media (max-height: 500px) {
+            .keyboard-adjust {
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+        }
+    </style>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚓</text></svg>">
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { ChevronRight, RefreshCw, CheckCircle2, BookOpen, Moon, Sun, Clock, Send, RotateCcw, ChevronDown, ChevronUp, Map, Star } = lucideReact;
+
+        const TranslationApp = () => {
+          const [currentQuestion, setCurrentQuestion] = useState(0);
+          const [showAnswer, setShowAnswer] = useState(false);
+          const [userAnswer, setUserAnswer] = useState('');
+          const [isSubmitted, setIsSubmitted] = useState(false);
+          const [isDarkMode, setIsDarkMode] = useState(true);
+          const [startTime, setStartTime] = useState(Date.now());
+          const [elapsedTime, setElapsedTime] = useState(0);
+          const [completedTime, setCompletedTime] = useState(null);
+          const [isTimerRunning, setIsTimerRunning] = useState(true);
+          const [solvedQuestions, setSolvedQuestions] = useState({});
+          const [showWritingGuide, setShowWritingGuide] = useState(false);
+          const [isMobile, setIsMobile] = useState(false);
+          const textareaRef = useRef(null);
+
+          // 모바일 디바이스 감지
+          useEffect(() => {
+            const checkMobile = () => {
+              setIsMobile(window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+            };
+            
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
+            return () => window.removeEventListener('resize', checkMobile);
+          }, []);
+
+          // 전체 문제에서 20문제 선별 (초급 10문제 + 중급 5문제 + 고급 5문제)
+          const questions = [
+            // 초급 문제 (10문제)
+            {
+              korean: "선박은 안전하게 항해한다.",
+              english: "Vessels navigate safely.",
+              explanation: "'선박'은 'Vessels', '안전하게'는 'safely', '항해하다'는 'navigate'로 번역합니다.",
+              keyPoints: "선박 (Vessels), 안전하게 (Safely), 항해하다 (Navigate)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "선박은", english: "Vessels" },
+                { korean: "항해한다", english: "navigate" },
+                { korean: "안전하게", english: "safely" }
+              ]
+            },
+            {
+              korean: "선장은 선박을 지휘한다.",
+              english: "The master commands the vessel.",
+              explanation: "'선장'은 'Master', '지휘하다'는 'command'로 번역합니다.",
+              keyPoints: "선장 (Master), 지휘하다 (Command), 선박 (Vessel)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "선장은", english: "The master" },
+                { korean: "지휘한다", english: "commands" },
+                { korean: "선박을", english: "the vessel" }
+              ]
+            },
+            {
+              korean: "항해사는 당직을 선다.",
+              english: "Officers keep watch.",
+              explanation: "'항해사'는 'Officers', '당직을 서다'는 'keep watch'로 번역합니다.",
+              keyPoints: "항해사 (Officers), 당직 (Watch), 서다 (Keep)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "항해사는", english: "Officers" },
+                { korean: "당직을 선다", english: "keep watch" }
+              ]
+            },
+            {
+              korean: "모든 선박은 충돌을 피한다.",
+              english: "All vessels avoid collision.",
+              explanation: "'모든'은 'All', '충돌'은 'collision', '피하다'는 'avoid'로 번역합니다.",
+              keyPoints: "모든 (All), 충돌 (Collision), 피하다 (Avoid)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "모든", english: "All" },
+                { korean: "선박은", english: "vessels" },
+                { korean: "피한다", english: "avoid" },
+                { korean: "충돌을", english: "collision" }
+              ]
+            },
+            {
+              korean: "레이더는 다른 선박을 찾는다.",
+              english: "Radar detects other vessels.",
+              explanation: "'레이더'는 'Radar', '찾다/탐지하다'는 'detect'로 번역합니다.",
+              keyPoints: "레이더 (Radar), 탐지하다 (Detect), 다른 선박 (Other vessels)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "레이더는", english: "Radar" },
+                { korean: "찾는다/탐지한다", english: "detects" },
+                { korean: "다른", english: "other" },
+                { korean: "선박을", english: "vessels" }
+              ]
+            },
+            {
+              korean: "선원들은 안전교육을 받는다.",
+              english: "Crew members receive safety training.",
+              explanation: "'선원들'은 'Crew members', '받다'는 'receive', '안전교육'은 'safety training'으로 번역합니다.",
+              keyPoints: "선원들 (Crew members), 받다 (Receive), 안전교육 (Safety training)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "선원들은", english: "Crew members" },
+                { korean: "받는다", english: "receive" },
+                { korean: "안전교육을", english: "safety training" }
+              ]
+            },
+            {
+              korean: "항해등은 밤에 켜진다.",
+              english: "Navigation lights are turned on at night.",
+              explanation: "'항해등'은 'Navigation lights', '켜지다'는 'are turned on', '밤에'는 'at night'로 번역합니다.",
+              keyPoints: "항해등 (Navigation lights), 켜지다 (Turn on), 밤 (Night)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "항해등은", english: "Navigation lights" },
+                { korean: "켜진다", english: "are turned on" },
+                { korean: "밤에", english: "at night" }
+              ]
+            },
+            {
+              korean: "구명조끼는 생명을 구한다.",
+              english: "Life jackets save lives.",
+              explanation: "'구명조끼'는 'Life jackets', '생명을 구하다'는 'save lives'로 번역합니다.",
+              keyPoints: "구명조끼 (Life jackets), 구하다 (Save), 생명 (Lives)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "구명조끼는", english: "Life jackets" },
+                { korean: "구한다", english: "save" },
+                { korean: "생명을", english: "lives" }
+              ]
+            },
+            {
+              korean: "선박은 항구에 정박한다.",
+              english: "Vessels anchor in the port.",
+              explanation: "'정박하다'는 'anchor', '항구에'는 'in the port'로 번역합니다.",
+              keyPoints: "정박하다 (Anchor), 항구 (Port)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "선박은", english: "Vessels" },
+                { korean: "정박한다", english: "anchor" },
+                { korean: "항구에", english: "in the port" }
+              ]
+            },
+            {
+              korean: "조타수는 방향타를 조작한다.",
+              english: "The helmsman operates the rudder.",
+              explanation: "'조타수'는 'Helmsman', '방향타'는 'rudder', '조작하다'는 'operate'로 번역합니다.",
+              keyPoints: "조타수 (Helmsman), 방향타 (Rudder), 조작하다 (Operate)",
+              difficulty: "초급",
+              writingGuide: [
+                { korean: "조타수는", english: "The helmsman" },
+                { korean: "조작한다", english: "operates" },
+                { korean: "방향타를", english: "the rudder" }
+              ]
+            },
+            // 중급 문제 (5문제)
+            {
+              korean: "선박은 안전한 속력으로 항해하여야 한다.",
+              english: "Vessels must navigate at a safe speed.",
+              explanation: "'~하여야 한다'는 'must'로, '안전한 속력'은 'safe speed'로 번역합니다.",
+              keyPoints: "의무 표현 (Must), 안전한 속력 (Safe speed)",
+              difficulty: "중급",
+              writingGuide: [
+                { korean: "선박은", english: "Vessels" },
+                { korean: "~하여야 한다 (의무)", english: "must" },
+                { korean: "항해하다", english: "navigate" },
+                { korean: "안전한 속력으로", english: "at a safe speed" }
+              ]
+            },
+            {
+              korean: "항해사는 당직 중 경계를 철저히 해야 한다.",
+              english: "Officers must maintain a thorough look-out during watch.",
+              explanation: "'경계를 철저히 하다'는 'maintain a thorough look-out', '당직 중'은 'during watch'로 번역합니다.",
+              keyPoints: "경계 (Look-out), 철저히 (Thorough), 당직 중 (During watch)",
+              difficulty: "중급",
+              writingGuide: [
+                { korean: "항해사는", english: "Officers" },
+                { korean: "~해야 한다 (의무)", english: "must" },
+                { korean: "경계를 철저히 하다", english: "maintain a thorough look-out" },
+                { korean: "당직 중", english: "during watch" }
+              ]
+            },
+            {
+              korean: "정박중인 선박은 정박당직을 배치해야 한다.",
+              english: "Vessels at anchor must deploy an anchor watch.",
+              explanation: "'정박중인'은 'at anchor', '정박당직'은 'anchor watch', '배치하다'는 'deploy'로 번역합니다.",
+              keyPoints: "정박중인 (At anchor), 정박당직 (Anchor watch), 배치하다 (Deploy)",
+              difficulty: "중급",
+              writingGuide: [
+                { korean: "정박중인", english: "at anchor" },
+                { korean: "선박은", english: "Vessels" },
+                { korean: "~해야 한다", english: "must" },
+                { korean: "배치하다", english: "deploy" },
+                { korean: "정박당직을", english: "an anchor watch" }
+              ]
+            },
+            {
+              korean: "선장은 선박의 안전에 대해 책임을 진다.",
+              english: "The master is responsible for the safety of the vessel.",
+              explanation: "'~에 대해 책임을 지다'는 'be responsible for'로 번역합니다.",
+              keyPoints: "책임지다 (Be responsible for), 선박의 안전 (Safety of the vessel)",
+              difficulty: "중급",
+              writingGuide: [
+                { korean: "선장은", english: "The master" },
+                { korean: "책임을 진다", english: "is responsible for" },
+                { korean: "선박의 안전에 대해", english: "the safety of the vessel" }
+              ]
+            },
+            {
+              korean: "레이더는 제한된 시계에서 다른 선박을 탐지한다.",
+              english: "Radar detects other vessels in restricted visibility.",
+              explanation: "'제한된 시계'는 'restricted visibility'로 번역하는 해사 전문용어입니다.",
+              keyPoints: "제한된 시계 (Restricted visibility), 탐지하다 (Detect)",
+              difficulty: "중급",
+              writingGuide: [
+                { korean: "레이더는", english: "Radar" },
+                { korean: "탐지한다", english: "detects" },
+                { korean: "다른 선박을", english: "other vessels" },
+                { korean: "제한된 시계에서", english: "in restricted visibility" }
+              ]
+            },
+            // 고급 문제 (5문제)
+            {
+              korean: "선교당직 항해사는 항해당직 중 레이더와 시각․청각 등 모든 수단을 이용하고, 선교의 전후좌우를 움직이며 주변 경계를 철저히 하여야 한다.",
+              english: "The officer of the watch on the bridge must utilize all available means, including radar, visual, and auditory senses, and move around the bridge fore, aft, port, and starboard, to maintain a thorough look-out during watchkeeping duties.",
+              explanation: "'선교당직 항해사'는 'officer of the watch on the bridge'로, '항해당직 중'은 'during watchkeeping duties'로 표현하는 것이 자연스럽습니다.",
+              keyPoints: "선교당직 항해사 (Officer of the watch on the bridge), 주변 경계 (Look-out), 철저히 경계 (Thorough look-out)",
+              difficulty: "고급",
+              writingGuide: [
+                { korean: "선교당직 항해사는", english: "The officer of the watch on the bridge" },
+                { korean: "~하여야 한다 (강한 의무)", english: "must" },
+                { korean: "모든 수단을 이용하고", english: "utilize all available means" },
+                { korean: "레이더와 시각․청각 등을 포함하여", english: "including radar, visual, and auditory senses" },
+                { korean: "그리고", english: "and" },
+                { korean: "선교의 전후좌우를 움직이며", english: "move around the bridge fore, aft, port, and starboard" },
+                { korean: "주변 경계를 철저히 하기 위해", english: "to maintain a thorough look-out" },
+                { korean: "항해당직 중", english: "during watchkeeping duties" }
+              ]
+            },
+            {
+              korean: "정박중인 선박은 정박당직요원을 배치하고 레이더 관측 등 주위에 대한 경계를 철저히 하여 충돌의 위험을 안고 접근하는 다른 선박에 대하여 주의환기신호를 하는 등 충돌을 피하기 위한 적절한 협력동작을 취하여야 한다.",
+              english: "A vessel at anchor must deploy an anchor watch, maintain a thorough look-out of the surroundings including radar observation, and take appropriate cooperative actions to avoid collision, such as giving warning signals to other vessels approaching with a risk of collision.",
+              explanation: "'정박선'은 'Vessel at anchor', '정박당직'은 'Anchor watch', '주의환기신호'는 'Warning signals'로 번역합니다.",
+              keyPoints: "정박선 (Vessel at anchor), 정박당직 (Anchor watch), 주의환기신호 (Warning signals)",
+              difficulty: "고급",
+              writingGuide: [
+                { korean: "정박중인 선박은", english: "A vessel at anchor" },
+                { korean: "~하여야 한다 (의무)", english: "must" },
+                { korean: "정박당직요원을 배치하고", english: "deploy an anchor watch" },
+                { korean: "경계를 철저히 하다", english: "maintain a thorough look-out" },
+                { korean: "주위에 대한", english: "of the surroundings" },
+                { korean: "레이더 관측 등을 포함하여", english: "including radar observation" },
+                { korean: "그리고", english: "and" },
+                { korean: "적절한 협력동작을 취하다", english: "take appropriate cooperative actions" },
+                { korean: "충돌을 피하기 위한", english: "to avoid collision" },
+                { korean: "예를 들어", english: "such as" },
+                { korean: "주의환기신호를 하는 것", english: "giving warning signals" },
+                { korean: "다른 선박에 대하여", english: "to other vessels" },
+                { korean: "충돌의 위험을 안고 접근하는", english: "approaching with a risk of collision" }
+              ]
+            },
+            {
+              korean: "시계가 제한된 수역 또는 그 부근을 항행하는 양 선박은 레이더에 의한 체계적인 관측으로 상대선박의 움직임을 지속적으로 확인하는 등 엄중한 경계와 그 당시 적합한 안전한 속력으로 감속하고 제한된 시계에서의 적절한 음향신호를 하면서 충분한 시간과 거리를 두고 충돌회피동작을 취하여야 한다.",
+              english: "Both vessels navigating in or near an area of restricted visibility must maintain a rigorous look-out, including systematic radar observation to continuously monitor the movements of other vessels. They must also reduce to a safe speed appropriate to the prevailing circumstances, give appropriate sound signals for restricted visibility, and take collision avoidance actions with sufficient time and distance.",
+              explanation: "'체계적인 관측'은 'Systematic observation', '음향신호'는 'Sound signals', '충돌회피동작'은 'Collision avoidance actions'로 번역합니다.",
+              keyPoints: "체계적인 관측 (Systematic observation), 음향신호 (Sound signals), 충돌회피동작 (Collision avoidance actions)",
+              difficulty: "고급",
+              writingGuide: [
+                { korean: "양 선박은", english: "Both vessels" },
+                { korean: "항행하는", english: "navigating" },
+                { korean: "시계가 제한된 수역 또는 그 부근을", english: "in or near an area of restricted visibility" },
+                { korean: "~하여야 한다 (의무)", english: "must" },
+                { korean: "엄중한 경계를 유지하다", english: "maintain a rigorous look-out" },
+                { korean: "포함하여", english: "including" },
+                { korean: "체계적인 레이더 관측을", english: "systematic radar observation" },
+                { korean: "지속적으로 확인하기 위한", english: "to continuously monitor" },
+                { korean: "상대선박의 움직임을", english: "the movements of other vessels" },
+                { korean: "또한 감속해야 한다", english: "They must also reduce" },
+                { korean: "안전한 속력으로", english: "to a safe speed" },
+                { korean: "그 당시 상황에 적합한", english: "appropriate to the prevailing circumstances" },
+                { korean: "그리고 음향신호를 하다", english: "give appropriate sound signals" },
+                { korean: "제한된 시계에서의", english: "for restricted visibility" },
+                { korean: "충돌회피동작을 취하다", english: "and take collision avoidance actions" },
+                { korean: "충분한 시간과 거리를 두고", english: "with sufficient time and distance" }
+              ]
+            },
+            {
+              korean: "선장은 조업에 열중하느라 예인선의 불빛만 보고 피예인 선박이 없는 것으로 착각하였으며, 예인선은 피예인부선을 예인하고 있다는 표시로 마스트에 항해등을 3개를 켜고 있었지만 이를 이해하지 못하고 피예인부선을 향하여 변침을 한 것도 이번 사고의 원인이 되었다고 판단된다.",
+              english: "It is believed that the master, engrossed in fishing operations, mistook the tug's lights as indicating no towed vessel was present and failed to understand that the tug was displaying three masthead lights as a signal for towing a vessel. Consequently, the master altered course towards the towed vessel, which also contributed to this accident.",
+              explanation: "'예인선'은 'Tug', '피예인부선'은 'Towed vessel/Barge', '변침'은 'Alter course'로 번역합니다.",
+              keyPoints: "예인선 (Tug/Towing vessel), 피예인부선 (Towed vessel/Barge), 변침 (Alter course)",
+              difficulty: "고급",
+              writingGuide: [
+                { korean: "~라고 판단된다", english: "It is believed that" },
+                { korean: "선장은", english: "the master" },
+                { korean: "조업에 열중하느라", english: "engrossed in fishing operations" },
+                { korean: "착각하였다", english: "mistook" },
+                { korean: "예인선의 불빛을", english: "the tug's lights" },
+                { korean: "~을 나타내는 것으로", english: "as indicating" },
+                { korean: "피예인 선박이 없다는 것", english: "no towed vessel was present" },
+                { korean: "그리고 이해하지 못했다", english: "and failed to understand" },
+                { korean: "예인선이 표시하고 있었다는 것을", english: "that the tug was displaying" },
+                { korean: "마스트에 항해등 3개를", english: "three masthead lights" },
+                { korean: "신호로서", english: "as a signal for" },
+                { korean: "선박을 예인하고 있다는", english: "towing a vessel" },
+                { korean: "결과적으로", english: "Consequently" },
+                { korean: "선장은 변침했다", english: "the master altered course" },
+                { korean: "피예인부선을 향하여", english: "towards the towed vessel" },
+                { korean: "이것도 기여했다", english: "which also contributed to" },
+                { korean: "이번 사고에", english: "this accident" }
+              ]
+            },
+            {
+              korean: "당시 이 선박에는 레이더가 설치되어 있지 않기 때문에 안전한 장소에 닻을 놓고 묘박하고 있다가 시정이 확보되었을 때 항해하든지 아니면 안전한 속력으로 감속한 후 경계를 철저히 하면서 항해하여야 하나 선장 B는 이를 이행하지 않았다.",
+              english: "As this vessel was not equipped with radar at the time, it should have anchored in a safe place and waited for visibility to improve before sailing, or proceeded at a safe reduced speed while maintaining a thorough look-out. However, Master B failed to comply with these requirements.",
+              explanation: "'묘박'은 문맥상 'anchored'가 적절하며, '시정'은 'Visibility'로 번역합니다.",
+              keyPoints: "시정 (Visibility), 레이더 미설치 (Not equipped with radar)",
+              difficulty: "고급",
+              writingGuide: [
+                { korean: "당시", english: "At the time" },
+                { korean: "이 선박에는", english: "this vessel" },
+                { korean: "레이더가 설치되어 있지 않기 때문에", english: "was not equipped with radar" },
+                { korean: "~했어야 한다", english: "should have" },
+                { korean: "안전한 장소에 닻을 놓고", english: "anchored in a safe place and" },
+                { korean: "묘박하고 있다가", english: "waited for" },
+                { korean: "시정이 확보되었을 때", english: "visibility to improve" },
+                { korean: "항해하기 전에", english: "before sailing" },
+                { korean: "또는", english: "or" },
+                { korean: "진행했어야 한다", english: "proceeded" },
+                { korean: "안전한 감속된 속력으로", english: "at a safe reduced speed" },
+                { korean: "~하면서", english: "while" },
+                { korean: "경계를 철저히 유지하는", english: "maintaining a thorough look-out" },
+                { korean: "그러나", english: "However" },
+                { korean: "선장 B는", english: "Master B" },
+                { korean: "이행하지 않았다", english: "failed to comply with" },
+                { korean: "이러한 요구사항들을", english: "these requirements" }
+              ]
+            }
+          ];
+
+          // 타이머 관련 useEffect
+          useEffect(() => {
+            let interval = null;
+            if (isTimerRunning) {
+              interval = setInterval(() => {
+                setElapsedTime(Date.now() - startTime);
+              }, 100);
+            }
+            return () => {
+              if (interval) clearInterval(interval);
+            };
+          }, [isTimerRunning, startTime]);
+
+          // 새 문제 시작 시 상태 초기화
+          useEffect(() => {
+            setStartTime(Date.now());
+            setElapsedTime(0);
+            setCompletedTime(null);
+            setIsTimerRunning(true);
+            setUserAnswer('');
+            setIsSubmitted(false);
+            setShowAnswer(false);
+            setShowWritingGuide(false);
+          }, [currentQuestion]);
+
+          // 시간 포맷팅 함수 (분:초 형식)
+          const formatTime = (milliseconds) => {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          };
+
+          // 답안 평가 함수
+          const evaluateAnswer = (userAnswer, correctAnswer) => {
+            if (!userAnswer.trim()) return { score: 0, feedback: '답안이 입력되지 않았습니다.' };
+            
+            const userText = userAnswer.trim();
+            const correctText = correctAnswer.trim();
+            
+            // 한글 검증 (한글이 포함되어 있으면 0점 처리)
+            const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(userText);
+            if (hasKorean) {
+              return { 
+                score: 0, 
+                feedback: '영어로만 답안을 작성해주세요. 한글이 포함되어 있어 0점 처리됩니다.' 
+              };
+            }
+            
+            // 완전히 동일한 답안인지 먼저 체크 (완벽한 일치)
+            if (userText === correctText) {
+              return { 
+                score: 100, 
+                feedback: '완벽합니다! 모범답안과 정확히 일치합니다.' 
+              };
+            }
+            
+            let totalScore = 0;
+            let deductions = [];
+            
+            // 1. 기본 내용 점수 (70점) - 키워드와 의미 기반
+            const normalizeForContent = (text) => {
+              return text.toLowerCase()
+                .replace(/[^\w\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            };
+            
+            const userNormalized = normalizeForContent(userText);
+            const correctNormalized = normalizeForContent(correctText);
+            
+            // 핵심 키워드 추출
+            const extractKeywords = (text) => {
+              const keywords = [];
+              const patterns = [
+                /officer of the watch/gi,
+                /look-?out/gi,
+                /vessel|ship/gi,
+                /radar/gi,
+                /navigation|navigate/gi,
+                /collision/gi,
+                /anchor|anchored/gi,
+                /master|captain/gi,
+                /bridge/gi,
+                /fishing/gi,
+                /safety|safe/gi,
+                /watchkeeping/gi,
+                /visibility/gi,
+                /restricted/gi,
+                /course|alter/gi,
+                /speed/gi,
+                /engine/gi,
+                /tug|towing/gi,
+                /port|starboard/gi,
+                /ahead/gi,
+                /maneuver|manoeuver/gi,
+                /must|should|shall/gi,
+                /maintain|ensure/gi,
+                /appropriate|proper/gi,
+                /thorough/gi
+              ];
+              
+              patterns.forEach(pattern => {
+                const matches = text.match(pattern);
+                if (matches) {
+                  keywords.push(...matches.map(m => m.toLowerCase()));
+                }
+              });
+              
+              return [...new Set(keywords)];
+            };
+            
+            const userKeywords = extractKeywords(userNormalized);
+            const correctKeywords = extractKeywords(correctNormalized);
+            
+            // 키워드 매칭 점수
+            let contentScore = 0;
+            if (correctKeywords.length > 0) {
+              const matchedKeywords = userKeywords.filter(keyword => 
+                correctKeywords.some(correctKeyword => 
+                  correctKeyword.includes(keyword) || keyword.includes(correctKeyword)
+                )
+              );
+              contentScore = (matchedKeywords.length / correctKeywords.length) * 50;
+            }
+            
+            // 문장 구조와 의미 점수
+            const hasProperStructure = /\b(must|should|shall|when|if|as|the|a|an)\b/i.test(userText);
+            const hasProperVerbs = /\b(maintain|ensure|take|avoid|prevent|perform|deploy|utilize|include)\b/i.test(userText);
+            const structureScore = (hasProperStructure ? 10 : 0) + (hasProperVerbs ? 10 : 0);
+            
+            totalScore += contentScore + structureScore;
+            
+            // 2. 대소문자 정확성 (10점)
+            let capitalizationScore = 10;
+            let capitalizationErrors = 0;
+            
+            // 문장 시작 대문자 체크
+            if (userText.charAt(0) !== correctText.charAt(0)) {
+              capitalizationScore -= 3;
+              capitalizationErrors++;
+            }
+            
+            totalScore += capitalizationScore;
+            if (capitalizationErrors > 0) {
+              deductions.push(`대소문자 오류 ${capitalizationErrors}개`);
+            }
+            
+            // 3. 구두점 정확성 (10점)
+            let punctuationScore = 10;
+            let punctuationErrors = 0;
+            
+            // 마침표 체크
+            const userEndsWithPeriod = userText.endsWith('.');
+            const correctEndsWithPeriod = correctText.endsWith('.');
+            if (userEndsWithPeriod !== correctEndsWithPeriod) {
+              punctuationScore -= 5;
+              punctuationErrors++;
+              deductions.push(correctEndsWithPeriod ? '마침표 누락' : '불필요한 마침표');
+            }
+            
+            totalScore += punctuationScore;
+            
+            // 4. 띄어쓰기 정확성 (10점)
+            let spacingScore = 10;
+            let spacingErrors = 0;
+            
+            // 단어 개수 비교
+            const userWords = userText.split(/\s+/).filter(word => word.length > 0);
+            const correctWords = correctText.split(/\s+/).filter(word => word.length > 0);
+            const wordCountDiff = Math.abs(userWords.length - correctWords.length);
+            
+            if (wordCountDiff > 0) {
+              spacingScore = Math.max(0, spacingScore - (wordCountDiff * 2));
+              spacingErrors += wordCountDiff;
+            }
+            
+            totalScore += spacingScore;
+            if (spacingErrors > 0) {
+              deductions.push(`띄어쓰기 오류 ${spacingErrors}개`);
+            }
+            
+            totalScore = Math.min(100, Math.round(totalScore));
+            
+            // 피드백 생성
+            let feedback = '';
+            if (totalScore >= 95) {
+              feedback = '거의 완벽합니다! 모범답안과 매우 유사한 수준입니다.';
+            } else if (totalScore >= 90) {
+              feedback = '훌륭합니다! 전문용어와 문법이 정확합니다.';
+            } else if (totalScore >= 80) {
+              feedback = '좋습니다! 대부분의 핵심 내용을 잘 번역했습니다.';
+            } else if (totalScore >= 70) {
+              feedback = '양호합니다. 세부사항을 조금 더 정확히 하면 좋겠습니다.';
+            } else if (totalScore >= 60) {
+              feedback = '보통입니다. 전문용어와 표기법을 개선해보세요.';
+            } else {
+              feedback = '더 많은 연습이 필요합니다. 모범답안을 참고하여 학습해보세요.';
+            }
+            
+            // 감점 사유가 있으면 피드백에 추가
+            if (deductions.length > 0) {
+              feedback += ` (감점 사유: ${deductions.join(', ')})`;
+            }
+            
+            return { score: totalScore, feedback };
+          };
+
+          // 현재 문제 다시 풀기
+          const retryCurrentQuestion = () => {
+            setUserAnswer('');
+            setIsSubmitted(false);
+            setShowAnswer(false);
+            setShowWritingGuide(false);
+            setStartTime(Date.now());
+            setElapsedTime(0);
+            setCompletedTime(null);
+            setIsTimerRunning(true);
+          };
+
+          const handleSubmit = () => {
+            if (userAnswer.trim() === '') {
+              alert('답안을 입력해주세요.');
+              return;
+            }
+            
+            setIsTimerRunning(false);
+            setCompletedTime(elapsedTime);
+            setIsSubmitted(true);
+            setShowAnswer(true);
+            
+            // 모바일에서 키보드 숨기기
+            if (textareaRef.current) {
+              textareaRef.current.blur();
+            }
+            
+            // 점수 저장
+            const evaluation = evaluateAnswer(userAnswer, questions[currentQuestion].english);
+            setSolvedQuestions(prev => ({
+              ...prev,
+              [currentQuestion]: {
+                score: evaluation.score,
+                userAnswer: userAnswer,
+                timestamp: Date.now()
+              }
+            }));
+          };
+
+          const handleNextQuestion = () => {
+            if (currentQuestion < questions.length - 1) {
+              setCurrentQuestion(currentQuestion + 1);
+              // 모바일에서 상단으로 스크롤
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          };
+
+          const handlePreviousQuestion = () => {
+            if (currentQuestion > 0) {
+              setCurrentQuestion(currentQuestion - 1);
+              // 모바일에서 상단으로 스크롤
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          };
+
+          const handleReset = () => {
+            setCurrentQuestion(0);
+            setSolvedQuestions({});
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          };
+
+          const toggleDarkMode = () => {
+            setIsDarkMode(!isDarkMode);
+          };
+
+          const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+          // 난이도별 색상 설정
+          const getDifficultyColor = (difficulty) => {
+            switch(difficulty) {
+              case '초급':
+                return isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800';
+              case '중급':
+                return isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800';
+              case '고급':
+                return isDarkMode ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-800';
+              default:
+                return isDarkMode ? 'bg-gray-900 text-gray-300' : 'bg-gray-100 text-gray-800';
+            }
+          };
+
+          return (
+            <div className={`min-h-screen transition-colors duration-300 scroll-container ${
+              isMobile ? 'p-2 pt-4' : 'p-4'
+            } ${
+              isDarkMode 
+                ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-indigo-900' 
+                : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50'
+            }`}>
+              <div className={`mx-auto ${isMobile ? 'max-w-full' : 'max-w-4xl'}`}>
+                
+                {/* 헤더 */}
+                <div className={`mb-6 ${isMobile ? 'mb-4' : 'mb-8'}`}>
+                  {/* 상단 바 - 타이머와 다크모드 */}
+                  <div className={`flex justify-between items-center ${isMobile ? 'mb-4' : 'mb-6'}`}>
+                    {/* 타이머 */}
+                    <div className={`flex items-center ${isMobile ? 'gap-2 px-3 py-2' : 'gap-3 px-4 py-3'} rounded-2xl shadow-lg ${
+                      isDarkMode 
+                        ? 'bg-gradient-to-r from-blue-900 to-indigo-900 border border-blue-700' 
+                        : 'bg-gradient-to-r from-blue-500 to-indigo-600 border border-blue-300'
+                    }`}>
+                      <div className={`${isMobile ? 'p-1.5' : 'p-2'} rounded-full ${
+                        isDarkMode ? 'bg-white/20' : 'bg-white/20'
+                      }`}>
+                        <Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ${
+                          isDarkMode ? 'text-white' : 'text-white'
+                        }`} />
+                      </div>
+                      <div className="text-center">
+                        <div className={`${isMobile ? 'text-xs mobile-text-sm' : 'text-xs'} font-medium ${
+                          isDarkMode ? 'text-white/80' : 'text-white/80'
+                        }`}>
+                          소요시간
+                        </div>
+                        <div className={`font-mono ${isMobile ? 'text-lg mobile-text-xl' : 'text-xl'} font-bold tracking-wider ${
+                          isDarkMode ? 'text-white' : 'text-white'
+                        }`}>
+                          {isTimerRunning ? formatTime(elapsedTime) : formatTime(completedTime || 0)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 다크모드 버튼 */}
+                    <button
+                      onClick={toggleDarkMode}
+                      className={`${isMobile ? 'p-2' : 'p-3'} rounded-2xl transition-all duration-300 shadow-lg hover:scale-105 touch-button ${
+                        isDarkMode 
+                          ? 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-yellow-400 border border-gray-600' 
+                          : 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-600 border border-gray-300'
+                      }`}
+                    >
+                      {isDarkMode ? <Sun className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} /> : <Moon className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />}
+                    </button>
+                  </div>
+                  
+                  {/* 제목 영역 */}
+                  <div className="text-center">
+                    <div className={`flex items-center justify-center ${isMobile ? 'gap-2 mb-3' : 'gap-3 mb-4'}`}>
+                      <BookOpen className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                      <h1 className={`${isMobile ? 'text-2xl mobile-text-2xl' : 'text-3xl'} font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                        해사영어 영작 문제
+                      </h1>
+                      <Star className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
+                    </div>
+                    <p className={`${isMobile ? 'text-sm mobile-text-sm' : ''} ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      초급부터 고급까지 엄선된 20문제로 해사영어 실력을 향상시켜보세요
+                    </p>
+                  </div>
+                </div>
+
+                {/* 진행률 */}
+                <div className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className={`${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                      문제 {currentQuestion + 1} / {questions.length}
+                    </span>
+                    <span className={`${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {Math.round(progress)}% 완료
+                    </span>
+                  </div>
+                  <div className={`w-full rounded-full h-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        isDarkMode ? 'bg-blue-500' : 'bg-blue-600'
+                      }`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* 메인 카드 */}
+                <div className={`rounded-2xl shadow-xl ${isMobile ? 'p-4 mb-4' : 'p-8 mb-6'} transition-colors duration-300 ${
+                  isDarkMode ? 'bg-gray-800' : 'bg-white'
+                }`}>
+                  
+                  {/* 문제 번호와 난이도 */}
+                  <div className={`flex items-center gap-2 ${isMobile ? 'mb-4' : 'mb-6'}`}>
+                    <div className={`px-3 py-1 rounded-full ${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} font-semibold ${
+                      isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      문제 {currentQuestion + 1}
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      getDifficultyColor(questions[currentQuestion].difficulty)
+                    }`}>
+                      {questions[currentQuestion].difficulty}
+                    </div>
+                  </div>
+
+                  {/* 한국어 문제 */}
+                  <div className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
+                    <h2 className={`${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold ${isMobile ? 'mb-3' : 'mb-4'} ${
+                      isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                    }`}>
+                      다음 한국어 문장을 영어로 번역하시오.
+                    </h2>
+                    <div className={`border-l-4 border-blue-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                    }`}>
+                      <p className={`leading-relaxed ${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} ${
+                        isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                      }`}>
+                        {questions[currentQuestion].korean}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 답안 입력창 */}
+                  {!isSubmitted && (
+                    <div className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
+                      <h3 className={`${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold ${isMobile ? 'mb-3' : 'mb-4'} ${
+                        isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                      }`}>
+                        답안 작성
+                      </h3>
+                      <textarea
+                        ref={textareaRef}
+                        value={userAnswer}
+                        onChange={(e) => setUserAnswer(e.target.value)}
+                        placeholder="여기에 영어 번역을 입력하세요..."
+                        className={`w-full ${isMobile ? 'h-28' : 'h-32'} p-4 rounded-lg border-2 transition-colors duration-200 resize-none ${isMobile ? 'text-base mobile-text-base' : 'text-base'} ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400 focus:border-blue-500 focus:bg-gray-600' 
+                            : 'bg-white border-gray-300 text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:bg-gray-50'
+                        }`}
+                        rows={isMobile ? 3 : 4}
+                      />
+                      <div className="mt-4 text-center">
+                        <button
+                          onClick={handleSubmit}
+                          disabled={userAnswer.trim() === ''}
+                          className={`${isMobile ? 'px-6 py-3' : 'px-8 py-3'} rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 mx-auto touch-button ${
+                            userAnswer.trim() === ''
+                              ? isDarkMode 
+                                ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
+                          }`}
+                        >
+                          <Send className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          답안 제출
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 답안 비교 및 해설 */}
+                  {showAnswer && isSubmitted && (
+                    <div className="space-y-6">
+                      
+                      {/* 평가 결과 */}
+                      <div className={`text-center ${isMobile ? 'p-4' : 'p-6'} rounded-xl shadow-lg ${
+                        isDarkMode 
+                          ? 'bg-gradient-to-r from-indigo-900/50 to-purple-900/50 border border-indigo-700' 
+                          : 'bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200'
+                      }`}>
+                        <div className={`flex items-center justify-center ${isMobile ? 'gap-3 mb-3' : 'gap-4 mb-4'}`}>
+                          <div className={`${isMobile ? 'p-2' : 'p-3'} rounded-full ${
+                            (() => {
+                              const evaluation = evaluateAnswer(userAnswer, questions[currentQuestion].english);
+                              const score = evaluation.score;
+                              if (score >= 90) return isDarkMode ? 'bg-green-800' : 'bg-green-500';
+                              if (score >= 80) return isDarkMode ? 'bg-blue-800' : 'bg-blue-500';
+                              if (score >= 70) return isDarkMode ? 'bg-yellow-800' : 'bg-yellow-500';
+                              if (score >= 60) return isDarkMode ? 'bg-orange-800' : 'bg-orange-500';
+                              return isDarkMode ? 'bg-red-800' : 'bg-red-500';
+                            })()
+                          }`}>
+                            <CheckCircle2 className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} ${
+                              isDarkMode ? 'text-white' : 'text-white'
+                            }`} />
+                          </div>
+                          <div className="text-center">
+                            <div className={`text-sm font-medium ${
+                              isDarkMode ? 'text-indigo-400' : 'text-indigo-600'
+                            }`}>
+                              답안 완성도
+                            </div>
+                            <div className={`${isMobile ? 'text-3xl mobile-text-3xl' : 'text-4xl'} font-bold font-mono tracking-wider ${
+                              (() => {
+                                const evaluation = evaluateAnswer(userAnswer, questions[currentQuestion].english);
+                                const score = evaluation.score;
+                                if (score >= 90) return isDarkMode ? 'text-green-300' : 'text-green-600';
+                                if (score >= 80) return isDarkMode ? 'text-blue-300' : 'text-blue-600';
+                                if (score >= 70) return isDarkMode ? 'text-yellow-300' : 'text-yellow-600';
+                                if (score >= 60) return isDarkMode ? 'text-orange-300' : 'text-orange-600';
+                                return isDarkMode ? 'text-red-300' : 'text-red-600';
+                              })()
+                            }`}>
+                              {evaluateAnswer(userAnswer, questions[currentQuestion].english).score}점
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`text-center p-3 rounded-lg ${
+                          isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'
+                        }`}>
+                          <p className={`font-medium ${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                            isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                          }`}>
+                            {evaluateAnswer(userAnswer, questions[currentQuestion].english).feedback}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* 완료 시간 표시 */}
+                      {completedTime && (
+                        <div className={`text-center ${isMobile ? 'p-3' : 'p-4'} rounded-xl shadow-lg ${
+                          isDarkMode 
+                            ? 'bg-gradient-to-r from-green-900/50 to-emerald-900/50 border border-green-700' 
+                            : 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200'
+                        }`}>
+                          <div className="flex items-center justify-center gap-3">
+                            <div className={`${isMobile ? 'p-1.5' : 'p-2'} rounded-full ${
+                              isDarkMode ? 'bg-green-800' : 'bg-green-500'
+                            }`}>
+                              <Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ${
+                                isDarkMode ? 'text-green-300' : 'text-white'
+                              }`} />
+                            </div>
+                            <div className="text-center">
+                              <div className={`${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} font-medium ${
+                                isDarkMode ? 'text-green-400' : 'text-green-600'
+                              }`}>
+                                문제 완료 시간
+                              </div>
+                              <div className={`${isMobile ? 'text-xl mobile-text-xl' : 'text-2xl'} font-bold font-mono tracking-wider ${
+                                isDarkMode ? 'text-green-300' : 'text-green-700'
+                              }`}>
+                                {formatTime(completedTime)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 답안 비교 */}
+                      <div className={`${isMobile ? 'space-y-4' : 'grid md:grid-cols-2 gap-6'}`}>
+                        
+                        {/* 사용자 답안 */}
+                        <div>
+                          <h3 className={`flex items-center gap-2 ${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold mb-3 ${
+                            isDarkMode ? 'text-blue-400' : 'text-blue-700'
+                          }`}>
+                            내 답안
+                          </h3>
+                          <div className={`border-l-4 border-blue-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
+                            isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'
+                          }`}>
+                            <p className={`leading-relaxed ${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                              isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                            }`}>
+                              {userAnswer}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* 모범 답안 */}
+                        <div>
+                          <h3 className={`flex items-center gap-2 ${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold mb-3 ${
+                            isDarkMode ? 'text-green-400' : 'text-green-700'
+                          }`}>
+                            <CheckCircle2 className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                            모범 답안
+                          </h3>
+                          <div className={`border-l-4 border-green-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
+                            isDarkMode ? 'bg-green-900/30' : 'bg-green-50'
+                          }`}>
+                            <p className={`leading-relaxed ${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                              isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                            }`}>
+                              {questions[currentQuestion].english}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 해설 */}
+                      <div>
+                        <h3 className={`${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold mb-3 ${
+                          isDarkMode ? 'text-purple-400' : 'text-purple-700'
+                        }`}>해설</h3>
+                        <div className={`border-l-4 border-purple-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
+                          isDarkMode ? 'bg-purple-900/30' : 'bg-purple-50'
+                        }`}>
+                          <p className={`leading-relaxed ${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                            isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                          }`}>
+                            {questions[currentQuestion].explanation}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* 중요 포인트 */}
+                      <div>
+                        <h3 className={`${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold mb-3 ${
+                          isDarkMode ? 'text-orange-400' : 'text-orange-700'
+                        }`}>중요 포인트</h3>
+                        <div className={`border-l-4 border-orange-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
+                          isDarkMode ? 'bg-orange-900/30' : 'bg-orange-50'
+                        }`}>
+                          <p className={`leading-relaxed ${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                            isDarkMode ? 'text-gray-200' : 'text-gray-800'
+                          }`}>
+                            {questions[currentQuestion].keyPoints}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* 영작지도 */}
+                      <div>
+                        <button
+                          onClick={() => setShowWritingGuide(!showWritingGuide)}
+                          className={`flex items-center gap-2 ${isMobile ? 'text-base mobile-text-lg' : 'text-lg'} font-semibold mb-3 w-full p-3 rounded-lg transition-colors duration-200 touch-button ${
+                            isDarkMode 
+                              ? 'text-cyan-400 hover:bg-cyan-900/20' 
+                              : 'text-cyan-700 hover:bg-cyan-50'
+                          }`}
+                        >
+                          <Map className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          영작지도 (작문 순서)
+                          {showWritingGuide ? 
+                            <ChevronUp className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-auto`} /> : 
+                            <ChevronDown className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-auto`} />
+                          }
+                        </button>
+                        
+                        {showWritingGuide && (
+                          <div className={`border-l-4 border-cyan-500 ${isMobile ? 'p-4' : 'p-6'} rounded-r-lg ${
+                            isDarkMode ? 'bg-cyan-900/30' : 'bg-cyan-50'
+                          }`}>
+                            <div className="space-y-3">
+                              {questions[currentQuestion].writingGuide?.map((step, index) => (
+                                <div key={index} className={`flex flex-col gap-2 p-3 rounded-lg ${
+                                  isDarkMode ? 'bg-gray-800/50' : 'bg-white/70'
+                                }`}>
+                                  <div className={`font-medium ${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} ${
+                                    isDarkMode ? 'text-cyan-300' : 'text-cyan-800'
+                                  }`}>
+                                    {index + 1}단계
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className={`${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} mb-1 ${
+                                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                                    }`}>
+                                      {step.korean}
+                                    </div>
+                                    <div className={`font-medium ${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                                      isDarkMode ? 'text-gray-100' : 'text-gray-800'
+                                    }`}>
+                                      {step.english}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            <div className={`mt-4 p-3 rounded-lg ${
+                              isDarkMode ? 'bg-cyan-800/30' : 'bg-cyan-100'
+                            }`}>
+                              <p className={`${isMobile ? 'text-sm mobile-text-sm' : 'text-sm'} ${
+                                isDarkMode ? 'text-cyan-200' : 'text-cyan-800'
+                              }`}>
+                                <strong>팁:</strong> 위의 순서대로 차근차근 작성하면 자연스러운 영어 문장이 완성됩니다!
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 버튼들 */}
+                <div className={`flex flex-wrap ${isMobile ? 'gap-2' : 'gap-4'} justify-center`}>
+                  {!isSubmitted ? (
+                    <div className={`text-center ${isMobile ? 'p-3' : 'p-4'} rounded-lg ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      <p className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>
+                        답안을 작성한 후 제출 버튼을 눌러주세요
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* 다시풀기 버튼 */}
+                      <button
+                        onClick={retryCurrentQuestion}
+                        className={`${isMobile ? 'px-4 py-2.5' : 'px-6 py-3'} rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 touch-button ${
+                          isDarkMode 
+                            ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                            : 'bg-orange-500 hover:bg-orange-600 text-white'
+                        }`}
+                      >
+                        <RotateCcw className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                        <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>다시풀기</span>
+                      </button>
+
+                      {currentQuestion > 0 && (
+                        <button
+                          onClick={handlePreviousQuestion}
+                          className={`${isMobile ? 'px-4 py-2.5' : 'px-6 py-3'} rounded-lg font-semibold transition-colors duration-200 touch-button ${
+                            isDarkMode 
+                              ? 'bg-gray-600 hover:bg-gray-700 text-white' 
+                              : 'bg-gray-500 hover:bg-gray-600 text-white'
+                          }`}
+                        >
+                          <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>이전 문제</span>
+                        </button>
+                      )}
+                      
+                      {currentQuestion < questions.length - 1 ? (
+                        <button
+                          onClick={handleNextQuestion}
+                          className={`bg-green-600 hover:bg-green-700 text-white ${isMobile ? 'px-6 py-2.5' : 'px-8 py-3'} rounded-lg font-semibold transition-colors duration-200 flex items-center gap-2 touch-button`}
+                        >
+                          <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>다음 문제</span>
+                          <ChevronRight className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleReset}
+                          className={`bg-blue-600 hover:bg-blue-700 text-white ${isMobile ? 'px-6 py-2.5' : 'px-8 py-3'} rounded-lg font-semibold transition-colors duration-200 flex items-center gap-2 touch-button`}
+                        >
+                          <RefreshCw className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                          <span className={`${isMobile ? 'text-sm mobile-text-sm' : ''}`}>처음부터 다시</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* 완료 메시지 */}
+                {currentQuestion === questions.length - 1 && showAnswer && (
+                  <div className="mt-8 text-center">
+                    <div className={`border rounded-lg ${isMobile ? 'p-4' : 'p-6'} ${
+                      isDarkMode 
+                        ? 'bg-gradient-to-r from-green-900/50 to-blue-900/50 border-green-700' 
+                        : 'bg-gradient-to-r from-green-100 to-blue-100 border-green-200'
+                    }`}>
+                      <h3 className={`${isMobile ? 'text-lg mobile-text-xl' : 'text-xl'} font-bold mb-2 ${
+                        isDarkMode ? 'text-green-300' : 'text-green-800'
+                      }`}>
+                        축하합니다! 해사영어 영작 20문제를 완료했습니다!
+                      </h3>
+                      <p className={`${isMobile ? 'text-sm mobile-text-base' : ''} ${
+                        isDarkMode ? 'text-green-200' : 'text-green-700'
+                      }`}>
+                        초급부터 고급까지 다양한 난이도의 문제를 통해 해사영어 실력이 향상되었습니다.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<TranslationApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
